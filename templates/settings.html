@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-braces-asterisk"></i> LLM Comparison
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/leaderboard"><i class="bi bi-trophy"></i> Leaderboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history"><i class="bi bi-clock-history"></i> History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/settings"><i class="bi bi-gear"></i> API Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h1 class="card-title fw-bold mb-4">
+                            <i class="bi bi-key"></i> API Key Settings
+                        </h1>
+                        <p class="card-text">
+                            Configure your API keys for each model. These keys are stored in your browser session and are never sent to our servers.
+                        </p>
+
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-info-circle"></i> You need to configure API keys for the models you want to use. For Groq models, you can get an API key from <a href="https://console.groq.com/" target="_blank" class="alert-link">Groq's console</a>.
+                        </div>
+
+                        <div class="mt-4">
+                            {% for model_id, model in models.items() %}
+                            <div class="card mb-3 api-key-card">
+                                <div class="card-header" style="background-color: {{ model.color }}20; border-left: 5px solid {{ model.color }}">
+                                    <div class="d-flex align-items-center">
+                                        <span class="model-icon-sm me-2" style="background-color: {{ model.color }}">
+                                            <i class="bi bi-{{ model.icon }}"></i>
+                                        </span>
+                                        <strong>{{ model.name }}</strong>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form class="api-key-form" data-model-id="{{ model_id }}">
+                                        <div class="input-group">
+                                            <input type="password" class="form-control api-key-input" 
+                                                   placeholder="Enter API key for {{ model.name }}" 
+                                                   value="{{ api_keys.get(model_id, '') }}">
+                                            <button class="btn btn-outline-secondary toggle-password" type="button">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button type="submit" class="btn btn-primary save-api-key">
+                                                <i class="bi bi-save"></i> Save
+                                            </button>
+                                        </div>
+                                        <div class="form-text mt-2">{{ model.description }}</div>
+                                        <div class="api-key-status mt-2"></div>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <a href="/" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            <small>Multi-LLM Comparison Dashboard &copy; 2025</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.closest('.input-group').querySelector('.api-key-input');
+                    const icon = this.querySelector('i');
+                    
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('bi-eye');
+                        icon.classList.add('bi-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('bi-eye-slash');
+                        icon.classList.add('bi-eye');
+                    }
+                });
+            });
+            
+            // Save API key
+            document.querySelectorAll('.api-key-form').forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const modelId = this.dataset.modelId;
+                    const input = this.querySelector('.api-key-input');
+                    const statusDiv = this.querySelector('.api-key-status');
+                    
+                    try {
+                        const response = await fetch('/api/settings/keys', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                model_id: modelId,
+                                api_key: input.value
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        statusDiv.innerHTML = `<div class="alert alert-success">
+                                                <i class="bi bi-check-circle"></i> ${data.message}
+                                              </div>`;
+                        setTimeout(() => {
+                            statusDiv.innerHTML = '';
+                        }, 3000);
+                    } catch (error) {
+                        statusDiv.innerHTML = `<div class="alert alert-danger">
+                                                <i class="bi bi-exclamation-triangle"></i> Error saving API key
+                                              </div>`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

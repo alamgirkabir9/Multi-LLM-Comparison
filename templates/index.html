@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-braces-asterisk"></i> LLM Comparison
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/leaderboard"><i class="bi bi-trophy"></i> Leaderboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history"><i class="bi bi-clock-history"></i> History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/settings"><i class="bi bi-gear"></i> API Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h1 class="card-title fw-bold mb-4">
+                            <i class="bi bi-robot"></i> Multi-LLM Comparison Dashboard
+                        </h1>
+                        <p class="card-text">
+                            Compare responses from multiple large language models side-by-side. Enter your query and select the models you'd like to compare.
+                        </p>
+
+                        <form action="/compare" method="post" class="mt-4">
+                            <div class="form-group mb-4">
+                                <label for="query" class="form-label fw-bold">Your Query:</label>
+                                <textarea class="form-control" id="query" name="query" rows="4" placeholder="Enter your prompt here..." required></textarea>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="form-label fw-bold">Select Models to Compare:</label>
+                                <div class="model-selection">
+                                    {% for model_id, model in models.items() %}
+                                    <div class="form-check model-card mb-2">
+                                        <input class="form-check-input" type="checkbox" name="models" value="{{ model_id }}" id="{{ model_id }}" 
+                                               {% if not api_keys.get(model_id) %}disabled{% endif %}>
+                                        <label class="form-check-label model-label" for="{{ model_id }}">
+                                            <span class="model-icon" style="background-color: {{ model.color }}">
+                                                <i class="bi bi-{{ model.icon }}"></i>
+                                            </span>
+                                            <div class="model-info">
+                                                <strong class="model-name">{{ model.name }}</strong>
+                                                <small class="model-desc">{{ model.description }}</small>
+                                                {% if not api_keys.get(model_id) %}
+                                                <span class="badge bg-warning text-dark">API Key Required</span>
+                                                {% endif %}
+                                            </div>
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">Missing API keys? <a href="/settings">Configure them here</a></small>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-lightning-charge"></i> Compare Models
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            <small>Multi-LLM Comparison Dashboard &copy; 2025</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/scripts.js"></script>
+</body>
+</html>
