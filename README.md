@@ -6,7 +6,7 @@ A comprehensive web application for comparing responses from multiple Large Lang
 
 ## 🌐 Live Demo
 
-**[🚀 Try the Live Demo]([https://multi-llm-comparison.onrender.com/])** ← *Replace with your actual demo URL*
+**[🚀 Try the Live Demo](https://multi-llm-comparison.onrender.com/)** ← *Replace with your actual demo URL*
 
 > **Note**: The demo may require you to provide your own API keys for the models you want to test. You can add them through the Settings page once you access the demo.
 
