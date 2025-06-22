@@ -59,7 +59,7 @@ A comprehensive web application for comparing responses from multiple Large Lang
 
 5. **Run the application**
    ```bash
-   python main.py
+   uvicorn main:app --reload
    ```
 
 6. **Open your browser**
