@@ -3,11 +3,14 @@ services:
     name: multi-llm-dashboard
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    region: oregon
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.11.7
+      - key: PIP_NO_CACHE_DIR
+        value: "1"
       - key: LLAMA3_70B_API_KEY
         sync: false
       - key: LLAMA_3_1_8B_API_KEY
