@@ -4,6 +4,12 @@ A comprehensive web application for comparing responses from multiple Large Lang
 
 ![Dashboard Preview](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![Python](https://img.shields.io/badge/python-3.8+-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
+## 🌐 Live Demo
+
+**[🚀 Try the Live Demo](https://your-demo-url.herokuapp.com)** ← *Replace with your actual demo URL*
+
+> **Note**: The demo may require you to provide your own API keys for the models you want to test. You can add them through the Settings page once you access the demo.
+
 ## ✨ Features
 
 - **Multi-Model Comparison**: Compare responses from 6 different LLM models simultaneously
