@@ -6,4 +6,4 @@ httpx
 pydantic
 python-dotenv
 aiofiles
-starlette
+itsdangerous
